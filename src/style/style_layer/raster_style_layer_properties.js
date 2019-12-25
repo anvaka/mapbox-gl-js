@@ -7,6 +7,7 @@ import styleSpec from '../../style-spec/reference/latest';
 import {
     Properties,
     DataConstantProperty,
+    PropertyValue,
     DataDrivenProperty,
     CrossFadedDataDrivenProperty,
     CrossFadedProperty,
@@ -29,6 +30,7 @@ export type PaintProps = {|
     "raster-contrast": DataConstantProperty<number>,
     "raster-resampling": DataConstantProperty<"linear" | "nearest">,
     "raster-fade-duration": DataConstantProperty<number>,
+    "raster-color-ramp": DataConstantProperty<Array<number>>,
 |};
 
 const paint: Properties<PaintProps> = new Properties({
@@ -40,6 +42,7 @@ const paint: Properties<PaintProps> = new Properties({
     "raster-contrast": new DataConstantProperty(styleSpec["paint_raster"]["raster-contrast"]),
     "raster-resampling": new DataConstantProperty(styleSpec["paint_raster"]["raster-resampling"]),
     "raster-fade-duration": new DataConstantProperty(styleSpec["paint_raster"]["raster-fade-duration"]),
+    "raster-color-ramp": new DataConstantProperty(styleSpec["paint_raster"]["raster-color-ramp"]),
 });
 
 // Note: without adding the explicit type annotation, Flow infers weaker types

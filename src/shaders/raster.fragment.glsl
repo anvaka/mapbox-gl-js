@@ -2,6 +2,7 @@ uniform float u_fade_t;
 uniform float u_opacity;
 uniform sampler2D u_image0;
 uniform sampler2D u_image1;
+uniform sampler2D u_height_ramp;
 varying vec2 v_pos0;
 varying vec2 v_pos1;
 
@@ -12,11 +13,19 @@ uniform float u_saturation_factor;
 uniform float u_contrast_factor;
 uniform vec3 u_spin_weights;
 
-void main() {
+vec4 getElevationColor(vec4 srcColor) {
+    // TODO: This should be conditional, and also allow other color decoding models
+    vec4 elevationColor = texture2D(u_height_ramp, vec2(srcColor.r, 0.0));
 
+    if (elevationColor.a == 0.0) return srcColor;
+    return elevationColor;
+}
+
+void main() {
     // read and cross-fade colors from the main and parent tiles
-    vec4 color0 = texture2D(u_image0, v_pos0);
-    vec4 color1 = texture2D(u_image1, v_pos1);
+    vec4 color0 = getElevationColor(texture2D(u_image0, v_pos0));
+    vec4 color1 = getElevationColor(texture2D(u_image1, v_pos1));
+
     if (color0.a > 0.0) {
         color0.rgb = color0.rgb / color0.a;
     }

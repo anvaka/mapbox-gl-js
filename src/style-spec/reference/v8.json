@@ -5546,6 +5546,20 @@
         ]
       },
       "property-type": "data-constant"
+    },
+    "raster-color-ramp": {
+      "type": "array",
+      "value": "number",
+      "default": null,
+      "doc": "Color gradient that should be used to generate elevation map",
+      "transition": false,
+      "sdk-support": {
+        "basic functionality": {
+          "js": "1.6.1"
+        },
+        "data-driven styling": {}
+      },
+      "property-type": "data-constant"
     }
   },
   "paint_hillshade": {

@@ -7,6 +7,7 @@ import browser from '../util/browser';
 import StencilMode from '../gl/stencil_mode';
 import DepthMode from '../gl/depth_mode';
 import CullFaceMode from '../gl/cull_face_mode';
+import Texture from '../render/texture';
 import {rasterUniformValues} from './program/raster_program';
 
 import type Painter from './painter';
@@ -61,6 +62,12 @@ function drawRaster(painter: Painter, sourceCache: SourceCache, layer: RasterSty
             tile.texture.bind(textureFilter, gl.CLAMP_TO_EDGE, gl.LINEAR_MIPMAP_NEAREST);
         }
 
+        context.activeTexture.set(gl.TEXTURE2);
+        const colorRampImage = layer.paint.get('raster-color-ramp');
+        if (colorRampImage && !layer.colorRampTexture) {
+            layer.colorRampTexture = new Texture(context, createImageFromColorsArray(colorRampImage), gl.RGBA);
+        }
+        layer.colorRampTexture.bind(textureFilter, gl.CLAMP_TO_EDGE, gl.LINEAR_MIPMAP_NEAREST);
         const uniformValues = rasterUniformValues(posMatrix, parentTL || [0, 0], parentScaleBy || 1, fade, layer);
 
         if (source instanceof ImageSource) {
@@ -122,4 +129,20 @@ function getFadeValues(tile, parentTile, sourceCache, layer, transform) {
             mix: 0
         };
     }
+}
+
+function createImageFromColorsArray(colorsArray: Array<number>) {
+    const imageData = new ImageData(256, 1);
+    const data = imageData.data;
+
+    for (let i = 0; i < colorsArray.length; i += 1) {
+        const color = colorsArray[i];
+        const offset = i * 4;
+        data[offset + 0] = (color >> 24) & 0xFF;
+        data[offset + 1] = (color >> 16) & 0xFF;
+        data[offset + 2] = (color >> 8) & 0xFF;
+        data[offset + 3] = (color >> 0) & 0xFF;
+    }
+
+    return imageData;
 }
